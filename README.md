@@ -60,11 +60,11 @@ python tools/download_models.py        # the main model: MLP with sensor dropout
 python tools/download_models.py --all  # also the 28- and 34-channel MLPs, the per-component MLPs and the patch Transformer
 ```
 
-The models are unpacked into `models/`. With the dataset (released upon publication), each model can be evaluated again on the trials of the participant it was not trained on, by inference only, on a CPU:
+The models are unpacked into `models/`. With the processed dataset of the Zenodo record (`processed/dataset_v3.7.1/`, released upon publication), each model can be evaluated again on the trials of the participant it was not trained on, by inference only, on a CPU:
 
 ```bash
 python insole2grfm/evaluate_sensor_configurations.py models/mlp_sensor_dropout_w21/all \
-    --data-dir <dataset> --output-dir results/evaluation/mlp --device cpu
+    --data-dir OpenInsole-dataset/processed/dataset_v3.7.1 --output-dir results/evaluation/mlp --device cpu
 ```
 
 This predicts the test trials of the 15 folds and scores them as in the paper (`configurations.json` and `evaluation/`); it works the same for the 28- and 34-channel MLPs and the Transformer.

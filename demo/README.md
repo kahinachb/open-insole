@@ -55,8 +55,8 @@ Replay a session to make a clean video, or as a fallback if the radio link fails
     --body-weight 744 --checkpoint $CHECKPOINT
 
 # A prepared dataset trial: the force-plate GRFM is drawn under the estimate
-# (the processed dataset is released on Zenodo upon publication of the paper)
-.venv-demo/bin/python -m demo.live --trial <dataset>/P05_walk.npz \
+# (processed dataset of the Zenodo record, released upon publication of the paper)
+.venv-demo/bin/python -m demo.live --trial OpenInsole-dataset/processed/dataset_v3.7.1/P05_walk.npz \
     --body-weight 744 --checkpoint $CHECKPOINT
 ```
 
