@@ -81,8 +81,6 @@ python tools/download_models.py mlp-28ch mlp-34ch  # any of the tags above
 python tools/download_models.py --all              # the four models
 ```
 
-While the repository is private, the script downloads through the GitHub CLI (`gh auth login` with an account that has access to the repository).
-
 The models are unpacked into `models/`. With the processed dataset of the Zenodo record (`processed/dataset_v3.7.1/`, released upon publication), each model can be evaluated again on the trials of the participant it was not trained on, by inference only, on a CPU:
 
 ```bash
