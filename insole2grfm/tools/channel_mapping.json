@@ -1,0 +1,43 @@
+{
+ "_provenance": "Channel -> KiCad footprint. 4-sensor boards follow the design numbering of Planson 2025 (Fig. 29): 1 antero-lateral, 2 antero-medial, 3 postero-lateral, 4 postero-medial, top view, mirrored for the right foot. Toe channels 2/3/4 = tip/lateral/medial, selected by platform-moment fit. Check: check_channel_mapping.py (R2 My 0.996 L / 0.982 R; identity mapping gives R2 Mx 0.28 / 0.59).",
+ "L": {
+  "mirror": 1,
+  "mapping": {
+   "L_p1_force_1": "FS1",
+   "L_p1_force_2": "FS4",
+   "L_p1_force_3": "FS2",
+   "L_p1_force_4": "FS3",
+   "L_p3_force_1": "FS2",
+   "L_p3_force_2": "FS4",
+   "L_p3_force_3": "FS1",
+   "L_p3_force_4": "FS3",
+   "L_p5_force_1": "FS1",
+   "L_p5_force_2": "FS4",
+   "L_p5_force_3": "FS2",
+   "L_p5_force_4": "FS3",
+   "L_p7_force_2": "FS3",
+   "L_p7_force_3": "FS2",
+   "L_p7_force_4": "FS1"
+  }
+ },
+ "R": {
+  "mirror": 1,
+  "mapping": {
+   "R_p9_force_1": "FS4",
+   "R_p9_force_2": "FS1",
+   "R_p9_force_3": "FS3",
+   "R_p9_force_4": "FS2",
+   "R_p11_force_1": "FS4",
+   "R_p11_force_2": "FS2",
+   "R_p11_force_3": "FS3",
+   "R_p11_force_4": "FS1",
+   "R_p13_force_1": "FS4",
+   "R_p13_force_2": "FS1",
+   "R_p13_force_3": "FS3",
+   "R_p13_force_4": "FS2",
+   "R_p15_force_2": "FS2",
+   "R_p15_force_3": "FS3",
+   "R_p15_force_4": "FS1"
+  }
+ }
+}

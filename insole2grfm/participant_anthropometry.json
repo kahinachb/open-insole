@@ -1,0 +1,62 @@
+{
+  "P01": {
+    "age_years": 24,
+    "height_m": 1.69
+  },
+  "P02": {
+    "age_years": 32,
+    "height_m": 1.79
+  },
+  "P03": {
+    "age_years": 25,
+    "height_m": 1.78
+  },
+  "P04": {
+    "age_years": 23,
+    "height_m": 1.83
+  },
+  "P05": {
+    "age_years": 25,
+    "height_m": 1.76
+  },
+  "P06": {
+    "age_years": 27,
+    "height_m": 1.76
+  },
+  "P07": {
+    "age_years": 24,
+    "height_m": 1.82
+  },
+  "P08": {
+    "age_years": 24,
+    "height_m": 1.74
+  },
+  "P09": {
+    "age_years": 29,
+    "height_m": 1.85
+  },
+  "P10": {
+    "age_years": 26,
+    "height_m": 1.74
+  },
+  "P11": {
+    "age_years": 24,
+    "height_m": 1.77
+  },
+  "P12": {
+    "age_years": 25,
+    "height_m": 1.79
+  },
+  "P13": {
+    "age_years": 29,
+    "height_m": 1.81
+  },
+  "P14": {
+    "age_years": 30,
+    "height_m": 1.79
+  },
+  "P15": {
+    "age_years": 25,
+    "height_m": 1.68
+  }
+}

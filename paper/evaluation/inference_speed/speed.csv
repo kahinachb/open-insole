@@ -1,0 +1,7 @@
+method,device,seconds_per_prediction,predictions_per_second,offline_seconds_per_sample,cpu,gpu
+mlp,cpu,0.00019574450561776757,5108.7002255517245,0.00019574450561776757,"1 thread, 13th Gen Intel(R) Core(TM) i5-1335U",
+mlp_per_target,cpu,0.0018108439981006086,552.2286851042378,0.0018108439981006086,"1 thread, 13th Gen Intel(R) Core(TM) i5-1335U",
+sabbah_loadsol,cpu,0.005437268468085676,183.91587722209246,0.005437268468085676,"1 thread, 13th Gen Intel(R) Core(TM) i5-1335U",
+sabbah_raw,cpu,0.0055099125020205975,181.49108531819326,0.0055099125020205975,"1 thread, 13th Gen Intel(R) Core(TM) i5-1335U",
+mahmud_gauges,cpu,2.7221205004607327,0.3673606660067932,0.0026583208012311843,"1 thread, 13th Gen Intel(R) Core(TM) i5-1335U",
+mahmud_raw,cpu,2.727731490973383,0.36660499880915803,0.0026638002841536945,"1 thread, 13th Gen Intel(R) Core(TM) i5-1335U",

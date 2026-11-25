@@ -1,0 +1,223 @@
+{
+  "model": "Tedaldi et al. 2014 gyroscope multi-position",
+  "formula": "omega_cal = correction_matrix @ (omega_raw - bias_dps)",
+  "units": "degrees per second",
+  "parameterization": "theta_g = [gamma_yz, gamma_zy, gamma_xz, gamma_zx, gamma_xy, gamma_yx, sx, sy, sz]",
+  "integration": "normalized quaternion Runge-Kutta 4 (RK4n), Tedaldi equations 15-21",
+  "accelerometer_calibration": "calibration_imu/data/session_20260914_181836_droit/calibration_acc/accelerometer_calibration.json",
+  "accepted_transitions": [
+    "transition_01",
+    "transition_02",
+    "transition_03",
+    "transition_04",
+    "transition_06",
+    "transition_07",
+    "transition_08",
+    "transition_09",
+    "transition_10",
+    "transition_11",
+    "transition_13",
+    "transition_17",
+    "transition_18",
+    "transition_20",
+    "transition_21",
+    "transition_22",
+    "transition_23",
+    "transition_24",
+    "transition_26",
+    "transition_28",
+    "transition_31",
+    "transition_35",
+    "transition_36"
+  ],
+  "patches": {
+    "1": {
+      "ID1": 9,
+      "bias_dps": {
+        "x": 0.21047255759496974,
+        "y": -0.1206715105471196,
+        "z": 0.018607378254800667
+      },
+      "correction_matrix": [
+        [
+          1.0067918424218838,
+          -0.0017175532488798546,
+          5.757015301399312e-05
+        ],
+        [
+          0.0013938652340000348,
+          0.9734134387205842,
+          -0.005995915295771267
+        ],
+        [
+          0.00406165875811048,
+          0.0007703231794451145,
+          1.0081981567507219
+        ]
+      ],
+      "scale_factors": {
+        "x": 1.0067918424218838,
+        "y": 0.9734134387205842,
+        "z": 1.0081981567507219
+      },
+      "misalignment_parameters_rad": {
+        "gamma_yz": 0.0017644642867652805,
+        "gamma_zy": 5.710202168940029e-05,
+        "gamma_xz": 0.0013844621850004548,
+        "gamma_zx": 0.005947159549562402,
+        "gamma_xy": -0.004034258708672067,
+        "gamma_yx": 0.0007913627948855901
+      },
+      "metrics": {
+        "raw_angle_rmse_deg": 1.9604625216243314,
+        "calibrated_fit_angle_rmse_deg": 0.7929960821616169,
+        "five_fold_cross_validation_angle_rmse_deg": null,
+        "converged": true,
+        "iterations": 5,
+        "cost": 0.0022026174929969094,
+        "normal_matrix_condition": 27.033861711333802
+      }
+    },
+    "2": {
+      "ID1": 11,
+      "bias_dps": {
+        "x": 0.057840078565278646,
+        "y": -0.03905434669171363,
+        "z": 0.07162681329576288
+      },
+      "correction_matrix": [
+        [
+          1.0003940671842952,
+          0.010572623897794732,
+          -0.01740283958562497
+        ],
+        [
+          -0.0013509701138865082,
+          0.9848804798885407,
+          -0.00813865134540111
+        ],
+        [
+          -0.0014815276555074743,
+          0.004311381920724167,
+          1.013847900524612
+        ]
+      ],
+      "scale_factors": {
+        "x": 1.0003940671842952,
+        "y": 0.9848804798885407,
+        "z": 1.013847900524612
+      },
+      "misalignment_parameters_rad": {
+        "gamma_yz": -0.0107349309014544,
+        "gamma_zy": -0.01716513845579789,
+        "gamma_xz": -0.0013504379506057477,
+        "gamma_zx": 0.008027487497078994,
+        "gamma_xy": 0.0014809440640500553,
+        "gamma_yx": 0.004377568658089444
+      },
+      "metrics": {
+        "raw_angle_rmse_deg": 1.4311296421229767,
+        "calibrated_fit_angle_rmse_deg": 0.5614412319723907,
+        "five_fold_cross_validation_angle_rmse_deg": null,
+        "converged": true,
+        "iterations": 12,
+        "cost": 0.0011041961852348964,
+        "normal_matrix_condition": 26.74101599392781
+      }
+    },
+    "3": {
+      "ID1": 13,
+      "bias_dps": {
+        "x": 0.023580896309486538,
+        "y": 0.028113626134940513,
+        "z": 0.14062928048685033
+      },
+      "correction_matrix": [
+        [
+          1.0041318917288575,
+          0.0006238922433945624,
+          0.0016830797409950644
+        ],
+        [
+          -0.0009395269746026548,
+          0.9835016988929072,
+          -0.00196273979021521
+        ],
+        [
+          -0.00037512695749218465,
+          0.0018985914435342734,
+          1.0139608789218129
+        ]
+      ],
+      "scale_factors": {
+        "x": 1.0041318917288575,
+        "y": 0.9835016988929072,
+        "z": 1.0139608789218129
+      },
+      "misalignment_parameters_rad": {
+        "gamma_yz": -0.0006343580739076055,
+        "gamma_zy": 0.0016599059943858522,
+        "gamma_xz": -0.0009356609249657735,
+        "gamma_zx": 0.0019357155004858506,
+        "gamma_xy": 0.0003735833515319509,
+        "gamma_yx": 0.0019304404310347915
+      },
+      "metrics": {
+        "raw_angle_rmse_deg": 1.5036557749907216,
+        "calibrated_fit_angle_rmse_deg": 0.19215660346914984,
+        "five_fold_cross_validation_angle_rmse_deg": null,
+        "converged": true,
+        "iterations": 4,
+        "cost": 0.00012934873461922629,
+        "normal_matrix_condition": 26.990377090788183
+      }
+    },
+    "4": {
+      "ID1": 15,
+      "bias_dps": {
+        "x": 0.1684524450140889,
+        "y": -0.055192801281047796,
+        "z": 0.094364351779378
+      },
+      "correction_matrix": [
+        [
+          1.0062505298738067,
+          -0.001962941320414518,
+          -0.002323552220530963
+        ],
+        [
+          0.004477937503364155,
+          0.9805266605263336,
+          0.0011294037635701556
+        ],
+        [
+          0.0019205120238009897,
+          -0.0029521933859225197,
+          1.0099058378109926
+        ]
+      ],
+      "scale_factors": {
+        "x": 1.0062505298738067,
+        "y": 0.9805266605263336,
+        "z": 1.0099058378109926
+      },
+      "misalignment_parameters_rad": {
+        "gamma_yz": 0.002001925495183208,
+        "gamma_zy": -0.002300761252719705,
+        "gamma_xz": 0.004450121883588703,
+        "gamma_zx": -0.001118325809481584,
+        "gamma_xy": -0.0019085823726640323,
+        "gamma_yx": -0.003010824187419669
+      },
+      "metrics": {
+        "raw_angle_rmse_deg": 1.4982622069395288,
+        "calibrated_fit_angle_rmse_deg": 0.307180170769598,
+        "five_fold_cross_validation_angle_rmse_deg": null,
+        "converged": true,
+        "iterations": 4,
+        "cost": 0.0003305494869793868,
+        "normal_matrix_condition": 26.715414346449535
+      }
+    }
+  }
+}

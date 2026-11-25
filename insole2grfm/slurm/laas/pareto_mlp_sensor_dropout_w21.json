@@ -1,0 +1,56 @@
+{
+  "run_dir": "results/exp_v3.7.1_sensor_dropout_mlp_r2/mlp_share_mask_sensor_dropout/all/fold_P04+P13",
+  "validation_participants": [
+    "P07"
+  ],
+  "window_stride": 1,
+  "reproduces_checkpoint_score": true,
+  "checkpoint_validation_physical_nmse": 0.403929767792002,
+  "tolerance": 0.1,
+  "mean_nrmse_limit": 0.08687585145235062,
+  "full": {
+    "configuration": "heel_gauges heel_acc heel_gyro midfoot_gauges midfoot_acc midfoot_gyro forefoot_gauges forefoot_acc forefoot_gyro toes_gauges toes_acc toes_gyro",
+    "group_count": 12,
+    "patches": 4,
+    "channels": 78,
+    "mean_nrmse": 0.0789780467748642
+  },
+  "best_per_patch_count": {
+    "1": {
+      "configuration": "forefoot_gauges forefoot_acc forefoot_gyro",
+      "group_count": 3,
+      "patches": 1,
+      "channels": 20,
+      "mean_nrmse": 0.09858784079551697
+    },
+    "2": {
+      "configuration": "heel_gauges forefoot_gauges forefoot_acc forefoot_gyro",
+      "group_count": 4,
+      "patches": 2,
+      "channels": 28,
+      "mean_nrmse": 0.08451053500175476
+    },
+    "3": {
+      "configuration": "heel_gauges heel_gyro forefoot_gauges forefoot_acc toes_gauges toes_acc toes_gyro",
+      "group_count": 7,
+      "patches": 3,
+      "channels": 46,
+      "mean_nrmse": 0.08049875497817993
+    },
+    "4": {
+      "configuration": "heel_gauges heel_gyro midfoot_gauges midfoot_acc forefoot_gauges forefoot_acc toes_gauges toes_acc toes_gyro",
+      "group_count": 9,
+      "patches": 4,
+      "channels": 60,
+      "mean_nrmse": 0.0782175362110138
+    }
+  },
+  "minimal": {
+    "configuration": "heel_gauges forefoot_gauges forefoot_acc",
+    "group_count": 3,
+    "patches": 2,
+    "channels": 22,
+    "mean_nrmse": 0.08534958213567734
+  },
+  "references": {}
+}

@@ -1,0 +1,9 @@
+# CPU torch is enough: one prediction takes ~0.2 ms.
+#   pip install --index-url https://download.pytorch.org/whl/cpu torch
+torch>=2.2
+rerun-sdk>=0.39
+numpy>=1.26
+opencv-python-headless>=4.8
+pillow>=10
+pyserial>=3.5
+matplotlib>=3.7

@@ -1,0 +1,20 @@
+{
+  "trials": 395,
+  "left_right_max_abs_ms": {
+    "median": 4.437999999993281,
+    "p95": 4.496000000000144,
+    "max": 4.4999999999999485
+  },
+  "frequency_hz": {
+    "median": 199.41872928826186
+  },
+  "packet_loss_rate": 2.4835970947398276e-05,
+  "duplicate_rate": 0.001167133940704707,
+  "plate_offset_abs_ms": {
+    "median": 10.0
+  },
+  "plate_offset_iqr_ms": {
+    "median": 1.0
+  },
+  "median_contact_correlation": 0.9963766211401692
+}

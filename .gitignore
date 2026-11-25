@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# Data and results live next to the code but are not distributed
+manip/
+dataset_v*/
+results/
+insole2grfm/static_plate_fz.csv
+paper/artefacts/
+models/
+
+# Live demo: environment, Tare and recorded sessions stay local
+.venv-demo/
+demo/tare*.json
+demo/sessions/

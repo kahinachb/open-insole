@@ -1,0 +1,3 @@
+component,reference,unit_price_eur,quantity_per_pair,role
+microcontroller board,Seeed XIAO ESP32-C6 (reception module),5.89,1,receiver
+filament,PLA spool for the 3D-printed parts,15.0,1,mechanics

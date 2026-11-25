@@ -1,0 +1,87 @@
+{
+ "split": "full_cv",
+ "folds": [
+  "P01",
+  "P02",
+  "P03",
+  "P04",
+  "P05",
+  "P06",
+  "P07",
+  "P08",
+  "P09",
+  "P10",
+  "P11",
+  "P12",
+  "P13",
+  "P14",
+  "P15"
+ ],
+ "common_args": [
+  "--causal",
+  "--window-samples",
+  "21",
+  "--split-level",
+  "subject_identity",
+  "--validation-group-count",
+  "2",
+  "--input-features",
+  "raw",
+  "--target-scaling",
+  "standard",
+  "--learning-rate",
+  "3e-4",
+  "--lr-scheduler",
+  "plateau",
+  "--lr-factor",
+  "0.5",
+  "--lr-patience",
+  "4",
+  "--min-learning-rate",
+  "1e-5",
+  "--gradient-clip",
+  "1.0",
+  "--epochs",
+  "120",
+  "--patience",
+  "12",
+  "--batch-size",
+  "256",
+  "--zero-target-weight",
+  "0.25",
+  "--num-workers",
+  "4",
+  "--seed",
+  "42",
+  "--gradnorm",
+  "--selection-subset",
+  "measured",
+  "--no-plots"
+ ],
+ "models": {
+  "mlp_per_target_dropout_Fy_R_w21": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input",
+    "--body-weight-masking",
+    "0.3",
+    "--targets",
+    "Fy_R",
+    "--sensor-dropout"
+   ]
+  }
+ },
+ "jobs": [
+  {
+   "name": "mlp_per_target_dropout_Fy_R_w21_all",
+   "model": "mlp_per_target_dropout_Fy_R_w21",
+   "task_set": "all"
+  }
+ ]
+}

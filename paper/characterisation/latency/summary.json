@@ -1,0 +1,53 @@
+{
+  "rows": [
+    {
+      "model": "mlp",
+      "window_samples": 21,
+      "device": "cpu",
+      "parameters": 500236,
+      "median_ms": 0.05414249608293176,
+      "p95_ms": 0.058470245858188705
+    },
+    {
+      "model": "mlp",
+      "window_samples": 51,
+      "device": "cpu",
+      "parameters": 1114636,
+      "median_ms": 0.06717001087963581,
+      "p95_ms": 0.07213270146166906
+    },
+    {
+      "model": "mlp",
+      "window_samples": 101,
+      "device": "cpu",
+      "parameters": 2138636,
+      "median_ms": 0.12434899690560997,
+      "p95_ms": 0.1305062789469957
+    },
+    {
+      "model": "patch_transformer",
+      "window_samples": 21,
+      "device": "cpu",
+      "parameters": 945612,
+      "median_ms": 0.8241969917435199,
+      "p95_ms": 0.8993167837616056
+    },
+    {
+      "model": "patch_transformer",
+      "window_samples": 51,
+      "device": "cpu",
+      "parameters": 945612,
+      "median_ms": 0.8468010055366904,
+      "p95_ms": 0.9166102041490376
+    },
+    {
+      "model": "patch_transformer",
+      "window_samples": 101,
+      "device": "cpu",
+      "parameters": 945612,
+      "median_ms": 0.9165019873762503,
+      "p95_ms": 0.9739047483890317
+    }
+  ],
+  "sample_period_ms": 5.0
+}

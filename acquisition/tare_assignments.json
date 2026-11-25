@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "description": "Affectation explicite des tares vides. Sujet2 reutilise la tare de Sujet; dataSemelle.bin reste un controle pieds leves.",
+  "assignments": {
+    "P01": "tare2",
+    "P01b": "tare2",
+    "P02": "P02",
+    "P02b": "P02",
+    "P03": "P03",
+    "P03b": "P03",
+    "P04": "P04",
+    "P04b": "P04",
+    "P05": "P05",
+    "P05b": "P05",
+    "P06": "P06",
+    "P06b": "P06",
+    "P07": "P07",
+    "P07b": "P07",
+    "P08": "tare1",
+    "P08b": "tare1",
+    "P09": "P02",
+    "P09b": "P02",
+    "P10": "P10",
+    "P10b": "P10",
+    "P11": "P11",
+    "P11b": "P11",
+    "P12": "tare1",
+    "P12b": "tare1",
+    "P13": "tare1",
+    "P13b": "tare1",
+    "P14": "tare1",
+    "P14b": "tare1",
+    "P15": "P15",
+    "P15b": "P15"
+  },
+  "notes": {
+    "P02": "Tare acquise apres P02 et avant P09.",
+    "P09": "Reutilise exactement la meme acquisition de tare que P02.",
+    "tare1": "P14, P12, P08 et P13.",
+    "tare2": "P01."
+  }
+}

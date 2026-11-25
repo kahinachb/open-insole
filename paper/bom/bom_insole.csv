@@ -1,0 +1,18 @@
+component,reference,unit_price_eur,quantity_per_insole,role
+load cell,TE FX29K0-100A-0100-L,20.0,15,load_cell
+IMU,Bosch BMI323,1.58,4,imu
+microcontroller,STM32L031K6T6,1.48,4,patch
+RS-485/RS-422 transceiver,TI THVD1420DR,0.34,4,patch
+quartz,MU00003-32.768K,0.95,4,patch
+connector,5 pins,0.92,4,patch
+connector,4 pins,0.6,4,patch
+capacitor,10 uF,0.083,4,patch
+capacitor,100 nF,0.0018,48,patch
+capacitor,4.3 pF,0.0098,8,patch
+resistor,120 ohm,0.014,4,patch
+resistor,1 kohm,0.0018,24,patch
+PCB,patch board,1.0,4,patch
+assembly,soldering,17.6,4,patch
+battery,lithium 3.7 V 1100 mAh,5.37,1,com_module
+microcontroller board,Seeed XIAO ESP32-C6,5.89,1,com_module
+RS-485 transceiver,TI THVD2450 (communication module),4.20,1,com_module

@@ -1,0 +1,224 @@
+{
+ "common_args": [
+  "--causal",
+  "--window-samples",
+  "21",
+  "--split-level",
+  "subject_identity",
+  "--validation-group-count",
+  "2",
+  "--input-features",
+  "raw",
+  "--target-scaling",
+  "standard",
+  "--learning-rate",
+  "3e-4",
+  "--lr-scheduler",
+  "plateau",
+  "--lr-factor",
+  "0.5",
+  "--lr-patience",
+  "4",
+  "--min-learning-rate",
+  "1e-5",
+  "--gradient-clip",
+  "1.0",
+  "--epochs",
+  "120",
+  "--patience",
+  "12",
+  "--batch-size",
+  "256",
+  "--zero-target-weight",
+  "0.25",
+  "--num-workers",
+  "4",
+  "--seed",
+  "42",
+  "--gradnorm",
+  "--selection-subset",
+  "measured"
+ ],
+ "split": {
+  "test": [
+   "P04",
+   "P13"
+  ],
+  "validation": [
+   "P07"
+  ]
+ },
+ "models": {
+  "mlp": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2"
+   ],
+   "baseline": true
+  },
+  "mlp_bw": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input"
+   ],
+   "baseline": true
+  },
+  "mlp_fh": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--foot-height-output"
+   ],
+   "baseline": true
+  },
+  "mlp_share": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input",
+    "--vertical-share"
+   ],
+   "baseline": true
+  },
+  "mlp_bw_mask": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input",
+    "--body-weight-masking",
+    "0.3"
+   ],
+   "baseline": true
+  },
+  "mlp_share_mask": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input",
+    "--vertical-share",
+    "--body-weight-masking",
+    "0.3"
+   ],
+   "baseline": true
+  },
+  "mlp_share_decomposed": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input",
+    "--vertical-share",
+    "--vertical-loss",
+    "decomposed"
+   ],
+   "baseline": true
+  },
+  "mlp_bw_sumloss": {
+   "model_type": "mlp",
+   "engine_args": [
+    "--hidden-size",
+    "256",
+    "--layers",
+    "2",
+    "--dropout",
+    "0.2",
+    "--body-weight-input",
+    "--vertical-loss",
+    "sum"
+   ],
+   "baseline": true
+  }
+ },
+ "jobs": [
+  {
+   "name": "mlp_continuous",
+   "model": "mlp",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_bw_continuous",
+   "model": "mlp_bw",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_all",
+   "model": "mlp",
+   "task_set": "all"
+  },
+  {
+   "name": "mlp_fh_all",
+   "model": "mlp_fh",
+   "task_set": "all"
+  },
+  {
+   "name": "mlp_share_continuous",
+   "model": "mlp_share",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_bw_mask_continuous",
+   "model": "mlp_bw_mask",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_share_mask_continuous",
+   "model": "mlp_share_mask",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_share_decomposed_continuous",
+   "model": "mlp_share_decomposed",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_bw_sumloss_continuous",
+   "model": "mlp_bw_sumloss",
+   "task_set": "continuous"
+  },
+  {
+   "name": "mlp_share_decomposed_all",
+   "model": "mlp_share_decomposed",
+   "task_set": "all"
+  },
+  {
+   "name": "mlp_bw_sumloss_all",
+   "model": "mlp_bw_sumloss",
+   "task_set": "all"
+  }
+ ]
+}

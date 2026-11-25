@@ -1,0 +1,221 @@
+{
+  "runs": {
+    "mlp": {
+      "path": "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all",
+      "prediction_files": [
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P01/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P02/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P03/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P04/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P05/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P06/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P07/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P08/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P09/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P10/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P11/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P12/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P13/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P14/predictions.csv",
+        "../results/full_cv_v3.7.1/mlp_sensor_dropout_w21/all/fold_P15/predictions.csv"
+      ],
+      "participants": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13",
+        "P14",
+        "P15"
+      ],
+      "task_families_present": [
+        "balance",
+        "hulahoop",
+        "jump",
+        "lateral_1_appui",
+        "lateral_2supports",
+        "squat",
+        "walk"
+      ],
+      "task_families_evaluated": [
+        "balance",
+        "hulahoop",
+        "jump",
+        "lateral_1_appui",
+        "lateral_2supports",
+        "squat",
+        "walk"
+      ]
+    },
+    "sabbah_loadsol": {
+      "path": "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all",
+      "prediction_files": [
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P01/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P02/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P03/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P04/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P05/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P06/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P07/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P08/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P09/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P10/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P11/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P12/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P13/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P14/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_loadsol/all/fold_P15/predictions.csv"
+      ],
+      "participants": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13",
+        "P14",
+        "P15"
+      ],
+      "task_families_present": [
+        "balance",
+        "hulahoop",
+        "jump",
+        "lateral_1_appui",
+        "lateral_2supports",
+        "squat",
+        "walk"
+      ],
+      "task_families_evaluated": [
+        "balance",
+        "hulahoop",
+        "jump",
+        "lateral_1_appui",
+        "lateral_2supports",
+        "squat",
+        "walk"
+      ]
+    },
+    "sabbah_raw": {
+      "path": "../results/full_cv_v3.7.1/sabbah_rf_raw/all",
+      "prediction_files": [
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P01/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P02/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P03/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P04/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P05/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P06/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P07/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P08/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P09/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P10/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P11/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P12/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P13/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P14/predictions.csv",
+        "../results/full_cv_v3.7.1/sabbah_rf_raw/all/fold_P15/predictions.csv"
+      ],
+      "participants": [
+        "P01",
+        "P02",
+        "P03",
+        "P04",
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09",
+        "P10",
+        "P11",
+        "P12",
+        "P13",
+        "P14",
+        "P15"
+      ],
+      "task_families_present": [
+        "balance",
+        "hulahoop",
+        "jump",
+        "lateral_1_appui",
+        "lateral_2supports",
+        "squat",
+        "walk"
+      ],
+      "task_families_evaluated": [
+        "balance",
+        "hulahoop",
+        "jump",
+        "lateral_1_appui",
+        "lateral_2supports",
+        "squat",
+        "walk"
+      ]
+    }
+  },
+  "common_task_families_filter": false,
+  "common_task_families": [
+    "balance",
+    "hulahoop",
+    "jump",
+    "lateral_1_appui",
+    "lateral_2supports",
+    "squat",
+    "walk"
+  ],
+  "subsets": [
+    "measured",
+    "airborne",
+    "both_feet_sum"
+  ],
+  "all_families_label": "ALL",
+  "metrics": [
+    "n",
+    "n_trials",
+    "rmse",
+    "rmse_pct_bw",
+    "mae",
+    "mean_error",
+    "nmse",
+    "nrmse_range",
+    "pcc_trial_mean",
+    "pcc_pooled",
+    "offset_share",
+    "dynamic_share"
+  ],
+  "range_percentiles": [
+    0.5,
+    99.5
+  ],
+  "sd_ddof": 1,
+  "foot_height": {
+    "runs": [],
+    "foot_states": [
+      "all",
+      "measured",
+      "airborne",
+      "masked"
+    ],
+    "metrics": [
+      "n",
+      "n_trials",
+      "rmse_mm",
+      "mae_mm",
+      "mean_error_mm"
+    ],
+    "unit": "mm"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "recordings": [
+    "session_gyro_20260803_124950_gauche",
+    "session_gyro_20260915_113614_droit"
+  ],
+  "angle_random_walk_deg_per_sqrt_h": {
+    "median": 0.3864772166174489,
+    "max": 0.7083580386837697
+  },
+  "bias_instability_deg_per_h": {
+    "median": 10.515852450464024,
+    "max": 20.246293175208802
+  }
+}

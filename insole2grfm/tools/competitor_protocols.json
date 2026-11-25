@@ -1,0 +1,10 @@
+{
+  "source": "competitors/README.md of the workspace, read 2026-10-24/26",
+  "studies": [
+    {"study": "Sabbah 2024", "outputs": "6D wrench, sum of both feet (plate frame)", "hardware": "loadsol pro (3 vertical zones) + shin IMU", "participants": "5", "split": "leave-one-subject-out; hyperparameters chosen on the test subjects", "causal": "no", "filtering": "zero-phase 10 Hz Butterworth on inputs and targets", "tasks": "ankle/hip strategy, squat, hula hoop (0/5/10 kg)", "models": "one Random Forest per task"},
+    {"study": "Li 2025", "outputs": "6D GRFM per foot", "hardware": "64 x 16 pressure insole", "participants": "4", "split": "step-level 5-fold, subjects mixed", "causal": "no (BiLSTM)", "filtering": "not stated", "tasks": "treadmill walking", "models": "DP-RGNet"},
+    {"study": "Mahmud 2026", "outputs": "3D GRF + 3D GRM + 2D CoP per foot", "hardware": "Moticon 16-sensor insoles", "participants": "9", "split": "5-fold subject-independent", "causal": "no (UNet-like segmentation)", "filtering": "not stated", "tasks": "treadmill walking and running, 0.9-9.9 km/h", "models": "Ke2KeNet"},
+    {"study": "Zhang 2025", "outputs": "3D GRF", "hardware": "TG0 capacitive insole + IMU", "participants": "not stated", "split": "random 70/15/15 (subjects mixed)", "causal": "not stated", "filtering": "not stated", "tasks": "walk, run, squat, sway, jumps", "models": "dual-stream cross-attention"},
+    {"study": "Hajizadeh 2023", "outputs": "3D GRF", "hardware": "Tekscan F-Scan", "participants": "16", "split": "train/val/test, cross-subject not stated", "causal": "not stated", "filtering": "not stated", "tasks": "walk, jog", "models": "LSTM (101-sample window)"}
+  ]
+}

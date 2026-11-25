@@ -1,0 +1,10 @@
+study,outputs,hardware,participants,split,causal,filtering,tasks,models
+Sabbah 2024,"6D wrench, sum of both feet (plate frame)",loadsol pro (3 vertical zones) + shin IMU,5,leave-one-subject-out; hyperparameters chosen on the test subjects,no,zero-phase 10 Hz Butterworth on inputs and targets,"ankle/hip strategy, squat, hula hoop (0/5/10 kg)",one Random Forest per task
+Li 2025,6D GRFM per foot,64 x 16 pressure insole,4,"step-level 5-fold, subjects mixed",no (BiLSTM),not stated,treadmill walking,DP-RGNet
+Mahmud 2026,3D GRF + 3D GRM + 2D CoP per foot,Moticon 16-sensor insoles,9,5-fold subject-independent,no (UNet-like segmentation),not stated,"treadmill walking and running, 0.9-9.9 km/h",Ke2KeNet
+Zhang 2025,3D GRF,TG0 capacitive insole + IMU,not stated,random 70/15/15 (subjects mixed),not stated,not stated,"walk, run, squat, sway, jumps",dual-stream cross-attention
+Hajizadeh 2023,3D GRF,Tekscan F-Scan,16,"train/val/test, cross-subject not stated",not stated,not stated,"walk, jog",LSTM (101-sample window)
+mlp,6D GRFM per foot (foot frame),"2 insoles, 15 FX29 Gauges + 4 IMUs each",15 evaluated,"Full CV (15 folds, one per Participant)",yes,"none (raw inputs, causal window)","balance, hulahoop, jump, lateral_1_appui, lateral_2supports, squat, walk","one model, all tasks"
+mahmud_gauges,6D GRFM per foot (foot frame),"2 insoles, 15 FX29 Gauges + 4 IMUs each",15 evaluated,"Full CV (15 folds, one per Participant)",no,unknown,"balance, hulahoop, jump, lateral_1_appui, lateral_2supports, squat, walk","one model, all tasks"
+mahmud_raw,6D GRFM per foot (foot frame),"2 insoles, 15 FX29 Gauges + 4 IMUs each",15 evaluated,"Full CV (15 folds, one per Participant)",no,unknown,"balance, hulahoop, jump, lateral_1_appui, lateral_2supports, squat, walk","one model, all tasks"
+sabbah_loadsol,6D GRFM per foot (foot frame),"2 insoles, 15 FX29 Gauges + 4 IMUs each",15 evaluated,"Full CV (15 folds, one per Participant)",no,unknown,"balance, hulahoop, jump, lateral_1_appui, lateral_2supports, squat, walk","one model, all tasks"
