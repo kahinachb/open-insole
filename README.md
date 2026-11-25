@@ -35,6 +35,17 @@ python -m venv .venv
 make test PYTHON=.venv/bin/python
 ```
 
+## Data
+
+The dataset is a Zenodo record, released upon publication of the paper. Download it next to this repository and link its two parts where the code looks for them by default (both are ignored by git):
+
+```bash
+ln -s ../OpenInsole-dataset/processed/dataset_v3.7.1 dataset_v3.7.1   # prepared trials: evaluation, training, demo replay
+ln -s ../OpenInsole-dataset/raw manip                                  # raw recordings: the pipeline of docs/pipeline.md
+```
+
+Every script also takes these paths as arguments.
+
 ## Reproducing the paper
 
 `paper/evaluation/` holds the evaluation results of every model of the paper: the error of each model on each test participant, task family and component, under the leave-one-participant-out cross-validation (Full CV), together with the insole characterisation in `paper/characterisation/`. From these files, one command recomputes what the paper reports, without retraining anything:
@@ -64,7 +75,7 @@ The models are unpacked into `models/`. With the processed dataset of the Zenodo
 
 ```bash
 python insole2grfm/evaluate_sensor_configurations.py models/mlp_sensor_dropout_w21/all \
-    --data-dir OpenInsole-dataset/processed/dataset_v3.7.1 --output-dir results/evaluation/mlp --device cpu
+    --data-dir dataset_v3.7.1 --output-dir results/evaluation/mlp --device cpu
 ```
 
 This predicts the test trials of the 15 folds and scores them as in the paper (`configurations.json` and `evaluation/`); it works the same for the 28- and 34-channel MLPs and the Transformer.
