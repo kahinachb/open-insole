@@ -22,7 +22,7 @@ This repository holds the code that records the insoles, turns the recordings in
 | `insole2grfm/` | Dataset builder, training engine, Full CV, evaluation, competitor reproductions (Sabbah 2024, Mahmud 2026), insole characterisation, visualisation |
 | `paper/` | The evaluation results behind the paper, and `make_artefacts.py`, which recomputes its numbers and tables from them |
 | `demo/` | Live demo: per-foot GRFM estimation and pressure maps in real time, in [Rerun](https://rerun.io) |
-| `tools/` | `download_models.py`, the trained models of the paper |
+| `tools/` | `download_models.py`: downloads the trained models of the paper |
 | `docs/` | `pipeline.md` (from raw recordings to a trained model), `guides/recording.md` (recording with the insoles) |
 
 ## Installation
@@ -64,12 +64,24 @@ The gait-cycle figures also need the per-sample predictions of the models, which
 
 ## Trained models
 
-The models of the paper are assets of the `v1.0` release. Each run is a leave-one-participant-out cross-validation (Full CV): 15 models, each trained without the participant it is named after.
+Each model of the paper has its own release on GitHub, holding one archive:
+
+| Release tag | Model | Folder in `models/` |
+|---|---|---|
+| `mlp-78ch` | MLP on the 78 channels, sensor dropout (main model, used by the live demo) | `mlp_sensor_dropout_w21` |
+| `mlp-28ch` | MLP on the selected 28-channel configuration | `mlp_minimal_28ch_w21` |
+| `mlp-34ch` | MLP on the 34-channel configuration | `mlp_minimal_34ch_w21` |
+| `mlp-per-target` | One MLP per component (11 networks, both vertical forces share one) | `mlp_per_target_dropout_w21` |
+
+Each archive is a leave-one-participant-out cross-validation (Full CV): 15 networks per model, each trained without the participant it is named after.
 
 ```bash
-python tools/download_models.py        # the main model: MLP with sensor dropout, 78 channels
-python tools/download_models.py --all  # also the 28- and 34-channel MLPs, the per-component MLPs and the patch Transformer
+python tools/download_models.py                    # mlp-78ch
+python tools/download_models.py mlp-28ch mlp-34ch  # any of the tags above
+python tools/download_models.py --all              # the four models
 ```
+
+While the repository is private, the script downloads through the GitHub CLI (`gh auth login` with an account that has access to the repository).
 
 The models are unpacked into `models/`. With the processed dataset of the Zenodo record (`processed/dataset_v3.7.1/`, released upon publication), each model can be evaluated again on the trials of the participant it was not trained on, by inference only, on a CPU:
 
@@ -78,7 +90,7 @@ python insole2grfm/evaluate_sensor_configurations.py models/mlp_sensor_dropout_w
     --data-dir dataset_v3.7.1 --output-dir results/evaluation/mlp --device cpu
 ```
 
-This predicts the test trials of the 15 folds and scores them as in the paper (`configurations.json` and `evaluation/`); it works the same for the 28- and 34-channel MLPs and the Transformer.
+This predicts the test trials of the 15 folds and scores them as in the paper (`configurations.json` and `evaluation/`); it works the same for the 28- and 34-channel MLPs.
 
 The competitor reproductions (Sabbah 2024, Mahmud 2026) are released as code and evaluation tables; their weights are not distributed.
 

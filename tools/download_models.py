@@ -1,40 +1,46 @@
-"""Download the trained models of the paper from the GitHub release and unpack them into models/.
+"""Download the trained models of the paper from the GitHub releases and unpack them into models/.
 
-    python tools/download_models.py                  # the main model (MLP with sensor dropout)
-    python tools/download_models.py --all            # the five neural runs of the paper
-    python tools/download_models.py mlp_minimal_28ch_w21
+    python tools/download_models.py                  # the main model: MLP, 78 channels
+    python tools/download_models.py --all            # the four models
+    python tools/download_models.py mlp-28ch mlp-per-target
 
-Each run is the Full CV of the paper: one model per fold, trained without the participant it is named
-after (``models/<run>/all/fold_P05/models/mlp_test_P05.pt`` never saw P05). Any fold of
-``mlp_sensor_dropout_w21`` can drive the live demo; P05 is the median fold. Every archive is checked
-against its SHA-256 before it is unpacked. Standard library only.
+Each model has its own release (tag ``mlp-78ch``, ``mlp-28ch``, ``mlp-34ch``, ``mlp-per-target``), holding one
+archive: the Full CV of the paper, one network per fold, each trained without the participant it is named after
+(``models/mlp_sensor_dropout_w21/all/fold_P05/models/mlp_test_P05.pt`` never saw P05). Any fold of the 78-channel
+MLP can drive the live demo; P05 is the median fold.
+
+Every archive is checked against its SHA-256 before it is unpacked. The download is anonymous when the
+repository is public; otherwise it goes through the GitHub CLI (``gh``), logged in with an account that has
+access to the repository.
 """
 from __future__ import annotations
 
 import argparse
 import hashlib
+import shutil
+import subprocess
 import sys
+import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
 
-RELEASE = "https://github.com/kahinachb/open-insole/releases/download/v1.0"
+REPOSITORY = "kahinachb/open-insole"
 ROOT = Path(__file__).resolve().parents[1]
 
-RUNS = {  # run: (SHA-256 of its archive, what it is in the paper)
-    "mlp_sensor_dropout_w21": ("ae8f9b94e3fc44fe163208ffac66466d5f8a725808396d9502d1ceda903c3a3f",
-                               "main model: MLP, 78 channels, sensor dropout"),
-    "mlp_minimal_28ch_w21": ("68c2efe72cfcf6021ea66c83fa5b5619b024698e18cdc190929f8c68958f5a64",
-                             "MLP on the selected 28-channel configuration"),
-    "mlp_minimal_34ch_w21": ("39e1bf97edfb8ae09409da2ed9ec7593b9b2080858ecd47a5ae73c7e4c9daf5d",
-                             "MLP on the 34-channel configuration"),
-    "patch_transformer_v8": ("caf8256908e503c474ddda2342eabfa394ba46257b76894daff4c8f7fb0f9913",
-                             "causal patch Transformer, 500 ms window"),
-    "mlp_per_target_dropout_w21": ("a643098ad582567f49ba8d1c2413ef5429133c9ed02caf9fd54bc953f88310ef",
-                                   "one MLP per component (11 networks, both vertical forces share one), "
-                                   "sensor dropout; one folder per component"),
+MODELS = {  # release tag: (archive name, SHA-256 of the archive, what it is in the paper)
+    "mlp-78ch": ("mlp_sensor_dropout_w21", "ae8f9b94e3fc44fe163208ffac66466d5f8a725808396d9502d1ceda903c3a3f",
+                 "main model: MLP on the 78 channels, sensor dropout"),
+    "mlp-28ch": ("mlp_minimal_28ch_w21", "68c2efe72cfcf6021ea66c83fa5b5619b024698e18cdc190929f8c68958f5a64",
+                 "MLP on the selected 28-channel configuration"),
+    "mlp-34ch": ("mlp_minimal_34ch_w21", "39e1bf97edfb8ae09409da2ed9ec7593b9b2080858ecd47a5ae73c7e4c9daf5d",
+                 "MLP on the 34-channel configuration"),
+    "mlp-per-target": ("mlp_per_target_dropout_w21",
+                       "a643098ad582567f49ba8d1c2413ef5429133c9ed02caf9fd54bc953f88310ef",
+                       "one MLP per component (11 networks, both vertical forces share one), sensor dropout; "
+                       "one folder per component"),
 }
-DEFAULT = "mlp_sensor_dropout_w21"
+DEFAULT = "mlp-78ch"
 
 
 def sha256(path: Path) -> str:
@@ -45,33 +51,47 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def fetch(run: str, out: Path) -> None:
-    expected, _ = RUNS[run]
-    archive = out / f"{run}.zip"
+def download(tag: str, name: str, out: Path) -> None:
+    """Anonymous download (public repository), else through ``gh`` (private repository)."""
+    url = f"https://github.com/{REPOSITORY}/releases/download/{tag}/{name}.zip"
+    try:
+        urllib.request.urlretrieve(url, out / f"{name}.zip")
+        return
+    except urllib.error.HTTPError as error:
+        if error.code != 404 or shutil.which("gh") is None:
+            raise SystemExit(f"{url}: {error}; if the repository is private, install and log in the GitHub CLI (gh)")
+    subprocess.run(["gh", "release", "download", tag, "--repo", REPOSITORY, "--pattern", f"{name}.zip",
+                    "--dir", str(out), "--clobber"], check=True)
+
+
+def fetch(tag: str, out: Path) -> None:
+    name, expected, _ = MODELS[tag]
+    archive = out / f"{name}.zip"
     if not (archive.exists() and sha256(archive) == expected):
-        print(f"downloading {run}.zip", file=sys.stderr)
-        urllib.request.urlretrieve(f"{RELEASE}/{run}.zip", archive)
+        print(f"downloading {tag} ({name}.zip)", file=sys.stderr)
+        download(tag, name, out)
     if sha256(archive) != expected:
         archive.unlink()
-        raise SystemExit(f"{run}.zip: checksum mismatch, archive removed; try again")
+        raise SystemExit(f"{name}.zip: checksum mismatch, archive removed; try again")
     with zipfile.ZipFile(archive) as z:
         z.extractall(out)
-    print(f"{run}: {len(list((out / run).glob('**/fold_*/models/*.pt')))} models in {out / run}", file=sys.stderr)
+    count = len(list((out / name).glob("**/fold_*/models/*.pt")))
+    print(f"{tag}: {count} networks in {out / name}", file=sys.stderr)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
-                                     epilog="runs: " + "; ".join(f"{k} ({v[1]})" for k, v in RUNS.items()))
-    parser.add_argument("runs", nargs="*", metavar="RUN", help=f"default: {DEFAULT}")
-    parser.add_argument("--all", action="store_true", help="every run")
+                                     epilog="models: " + "; ".join(f"{k} ({v[2]})" for k, v in MODELS.items()))
+    parser.add_argument("models", nargs="*", metavar="MODEL", help=f"release tag, default: {DEFAULT}")
+    parser.add_argument("--all", action="store_true", help="the four models")
     parser.add_argument("--out", type=Path, default=ROOT / "models")
     args = parser.parse_args()
-    unknown = [run for run in args.runs if run not in RUNS]
+    unknown = [tag for tag in args.models if tag not in MODELS]
     if unknown:
-        parser.error(f"unknown run {', '.join(unknown)}; choose from {', '.join(RUNS)}")
+        parser.error(f"unknown model {', '.join(unknown)}; choose from {', '.join(MODELS)}")
     args.out.mkdir(parents=True, exist_ok=True)
-    for run in list(RUNS) if args.all else args.runs or [DEFAULT]:
-        fetch(run, args.out)
+    for tag in list(MODELS) if args.all else args.models or [DEFAULT]:
+        fetch(tag, args.out)
 
 
 if __name__ == "__main__":
