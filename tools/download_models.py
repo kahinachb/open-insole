@@ -61,13 +61,14 @@ def download(tag: str, name: str, out: Path) -> None:
         if error.code != 404 or shutil.which("gh") is None:
             raise SystemExit(f"{url}: {error}; if the repository is private, install and log in the GitHub CLI (gh)")
     subprocess.run(["gh", "release", "download", tag, "--repo", REPOSITORY, "--pattern", f"{name}.zip",
-                    "--dir", str(out), "--clobber"], check=True)
+                    "--dir", str(out)], check=True)
 
 
 def fetch(tag: str, out: Path) -> None:
     name, expected, _ = MODELS[tag]
     archive = out / f"{name}.zip"
     if not (archive.exists() and sha256(archive) == expected):
+        archive.unlink(missing_ok=True)
         print(f"downloading {tag} ({name}.zip)", file=sys.stderr)
         download(tag, name, out)
     if sha256(archive) != expected:
