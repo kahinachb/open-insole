@@ -45,7 +45,7 @@ make paper-artefacts PYTHON=.venv/bin/python
 
 It writes `paper/artefacts/`:
 
-- `numbers.tex`: every number cited in the paper (errors, p values, confidence intervals, costs, timings), one LaTeX macro each, so that no number of the paper is typed by hand;
+- `numbers.tex`: every number cited in the paper (errors, p values, confidence intervals, costs, timings), one LaTeX macro each;
 - `tables/`: the result tables of the paper and of its supplementary material;
 - `figures/`: the result figures that need only these files (participant scores, sensor configurations, speed against error).
 
@@ -60,7 +60,14 @@ python tools/download_models.py        # the main model: MLP with sensor dropout
 python tools/download_models.py --all  # also the 28- and 34-channel MLPs, the per-component MLPs and the patch Transformer
 ```
 
-The models are unpacked into `models/`.
+The models are unpacked into `models/`. With the dataset (released upon publication), each model can be evaluated again on the trials of the participant it was not trained on, by inference only, on a CPU:
+
+```bash
+python insole2grfm/evaluate_sensor_configurations.py models/mlp_sensor_dropout_w21/all \
+    --data-dir <dataset> --output-dir results/evaluation/mlp --device cpu
+```
+
+This predicts the test trials of the 15 folds and scores them as in the paper (`configurations.json` and `evaluation/`); it works the same for the 28- and 34-channel MLPs and the Transformer.
 
 The competitor reproductions (Sabbah 2024, Mahmud 2026) are released as code and evaluation tables; their weights are not distributed.
 
