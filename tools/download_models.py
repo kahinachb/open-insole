@@ -1,7 +1,7 @@
 """Download the trained models of the paper from the GitHub release and unpack them into models/.
 
     python tools/download_models.py                  # the main model (MLP with sensor dropout)
-    python tools/download_models.py --all            # the four neural runs of the paper
+    python tools/download_models.py --all            # the five neural runs of the paper
     python tools/download_models.py mlp_minimal_28ch_w21
 
 Each run is the Full CV of the paper: one model per fold, trained without the participant it is named
@@ -30,6 +30,9 @@ RUNS = {  # run: (SHA-256 of its archive, what it is in the paper)
                              "MLP on the 34-channel configuration"),
     "patch_transformer_v8": ("caf8256908e503c474ddda2342eabfa394ba46257b76894daff4c8f7fb0f9913",
                              "causal patch Transformer, 500 ms window"),
+    "mlp_per_target_dropout_w21": ("a643098ad582567f49ba8d1c2413ef5429133c9ed02caf9fd54bc953f88310ef",
+                                   "one MLP per component (11 networks, both vertical forces share one), "
+                                   "sensor dropout; one folder per component"),
 }
 DEFAULT = "mlp_sensor_dropout_w21"
 
@@ -53,14 +56,14 @@ def fetch(run: str, out: Path) -> None:
         raise SystemExit(f"{run}.zip: checksum mismatch, archive removed; try again")
     with zipfile.ZipFile(archive) as z:
         z.extractall(out)
-    print(f"{run}: {len(list((out / run).glob('all/fold_*/models/*.pt')))} models in {out / run}", file=sys.stderr)
+    print(f"{run}: {len(list((out / run).glob('**/fold_*/models/*.pt')))} models in {out / run}", file=sys.stderr)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0],
                                      epilog="runs: " + "; ".join(f"{k} ({v[1]})" for k, v in RUNS.items()))
     parser.add_argument("runs", nargs="*", metavar="RUN", help=f"default: {DEFAULT}")
-    parser.add_argument("--all", action="store_true", help="the four runs")
+    parser.add_argument("--all", action="store_true", help="every run")
     parser.add_argument("--out", type=Path, default=ROOT / "models")
     args = parser.parse_args()
     unknown = [run for run in args.runs if run not in RUNS]

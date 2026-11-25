@@ -52,7 +52,7 @@ The models of the paper are assets of the `v1.0` release. Each run is a leave-on
 
 ```bash
 python tools/download_models.py        # the main model: MLP with sensor dropout, 78 channels
-python tools/download_models.py --all  # also the 28- and 34-channel MLPs and the patch Transformer
+python tools/download_models.py --all  # also the 28- and 34-channel MLPs, the per-component MLPs and the patch Transformer
 ```
 
 The models are unpacked into `models/`.
