@@ -1178,6 +1178,12 @@ EMULATED_TABLE = [
     ("Random Forest, loadsol-like", "SabbahLoadsol", False),
     ("Ke2KeNet, load cells", "MahmudGauges", False),
 ]
+RMSE_TABLE = [  # in the supplementary material, which has no bibliography: no citations
+    ("MLP (ours)", "Main", True),
+    ("MLP, one per target (ours)", "PerTarget", True),
+    ("Random Forest, 78 ch.", "SabbahRaw", False),
+    ("Ke2KeNet, 78 ch.", "MahmudRaw", False),
+]
 MAIN_TABLE = [
     ("MLP (ours)", "Main"),
     ("Random Forest [Sabbah], loadsol-like", "SabbahLoadsol"),
@@ -1369,7 +1375,7 @@ def write_tables(evaluation: Path, tables: Path) -> None:
 
     (tables / "results.tex").write_text(results_table(columns(RESULTS_TABLE)))
     (tables / "results_emulated.tex").write_text(results_table(columns(EMULATED_TABLE)))
-    (tables / "results_rmse.tex").write_text(rmse_table(columns(RESULTS_TABLE)))
+    (tables / "results_rmse.tex").write_text(rmse_table(columns(RMSE_TABLE)))
     (tables / "airborne.tex").write_text(airborne_table(*main_run))
     (tables / "task_families.tex").write_text(family_table(*main_run, FAMILY_LABELS))
     extra = evaluation / LOADING_TRANSITIONS
