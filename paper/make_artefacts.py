@@ -323,6 +323,32 @@ def format_ci(values: pd.Series) -> str:
 
 
 COMPONENTS = ["Fx", "Fy", "Fz", "Mx", "My", "Mz"]
+ANTHROPOMETRY = Path(__file__).resolve().parents[1] / "insole2grfm" / "participant_anthropometry.json"
+
+
+def normalised(rows: pd.DataFrame, evaluation_dir: Path, column: str = "rmse",
+               anthropometry: Path = ANTHROPOMETRY) -> pd.Series:
+    """``column`` of each row as a percentage of body weight for a force (%BW) and of body weight times height
+    for a moment (%BW.H), with the Participant's unloaded body weight (``body_weight.csv``) and height."""
+    import json
+
+    weight = rows.participant.map(body_weight_n(Path(evaluation_dir) / "body_weight.csv"))
+    heights = {code: entry["height_m"] for code, entry in json.loads(Path(anthropometry).read_text()).items()}
+    height = rows.participant.map(heights).where(~rows.component.str.startswith("F"), 1.0)
+    return 100 * rows[column] / (weight * height)
+
+
+def normalised_digits(component: str) -> int:
+    """Decimals of a normalised error: two for a force (%BW), three for a moment (%BW.H, about ten times smaller)."""
+    return 2 if component.startswith("F") else 3
+
+
+def normalised_unit(component: str) -> str:
+    return r"\%BW" if component.startswith("F") else r"\%BW$\cdot$H"
+
+
+def physical_unit(component: str) -> str:
+    return "N" if component.startswith("F") else r"N$\cdot$m"
 
 
 @dataclass(frozen=True)
@@ -426,10 +452,11 @@ def format_ms(ms: float) -> str:
     return f"{ms:.2f}" if ms < 10 else f"{ms:,.0f}".replace(",", r"\,")
 
 
-def results_table(methods: list[ResultsColumn]) -> str:
+def results_table(methods: list[ResultsColumn], anthropometry: Path = ANTHROPOMETRY) -> str:
     """LaTeX tabular: RMSE, NRMSE and PCC of each method for each component of each foot.
 
-    Measured samples, all tasks; each value is the mean over the Participants. In each row, the lowest
+    Measured samples, all tasks; each value is the mean over the Participants. The RMSE of a force is in
+    %BW and that of a moment in %BW.H (``normalised``). In each row, the lowest
     NRMSE among the real-time methods is in bold and the lowest overall is underlined; our columns are
     shaded. Below: the score of each method (mean $\pm$ SD of the Participants' mean over the 12
     targets), its gap to the first method (relative change and paired Wilcoxon p), the time per frame and
@@ -443,6 +470,8 @@ def results_table(methods: list[ResultsColumn]) -> str:
         return rows
 
     frames = [measured(m.evaluation_dir, m.run) for m in methods]
+    frames = [frame.assign(rmse_norm=normalised(frame, m.evaluation_dir, anthropometry=anthropometry))
+              for frame, m in zip(frames, methods)]
     n = len(methods)
     spec = "".join((OURS_SHADE * 3) if m.ours else "ccc" for m in methods)
 
@@ -469,19 +498,17 @@ def results_table(methods: list[ResultsColumn]) -> str:
         r"\midrule",
     ]
     for component in COMPONENTS:
-        force = component.startswith("F")
-        digits = 1 if force else 2
         for foot in FEET:
             stats = []
             for frame in frames:
                 rows = frame[(frame.component == component) & (frame.foot == foot)]
-                stats.append((rows.rmse.mean(), 100 * rows.nrmse_range.mean(), rows.pcc_trial_mean.mean()))
+                stats.append((rows.rmse_norm.mean(), 100 * rows.nrmse_range.mean(), rows.pcc_trial_mean.mean()))
             nrmses = mark([nrmse for _, nrmse, _ in stats])
             cells = []
             for (rmse, _, pcc), nrmse in zip(stats, nrmses):
-                cells += [f"{rmse:.{digits}f}", nrmse, f"{pcc:.2f}"]
+                cells += [f"{rmse:.{normalised_digits(component)}f}", nrmse, f"{pcc:.2f}"]
             lines.append(
-                rf"${component[0]}_{{{component[1]},{foot}}}$ ({'N' if force else r'N$\cdot$m'}) & " + " & ".join(cells) + r" \\"
+                rf"${component[0]}_{{{component[1]},{foot}}}$ ({normalised_unit(component)}) & " + " & ".join(cells) + r" \\"
             )
     lines.append(r"\midrule")
     scores = [method_score(m.evaluation_dir, m.run) for m in methods]
@@ -514,10 +541,42 @@ def results_table(methods: list[ResultsColumn]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def airborne_table(evaluation_dir: Path, run: str) -> str:
-    """LaTeX tabular of the airborne samples, where the truth is zero: RMSE and mean error per component and foot."""
+def rmse_table(methods: list[ResultsColumn]) -> str:
+    """LaTeX tabular: RMSE of each method for each component of each foot, in N or N m.
+
+    Measured samples, all tasks; mean $\pm$ SD over the Participants. Our columns are shaded.
+    """
+    spec = "".join(OURS_SHADE if m.ours else "c" for m in methods)
+    lines = [
+        rf"\begin{{tabular}}{{l{spec}}}",
+        r"\toprule",
+        "Target & " + " & ".join(m.label for m in methods) + r" \\",
+        r"\midrule",
+    ]
+    frames = []
+    for m in methods:
+        table = read_table(Path(m.evaluation_dir) / "per_participant.csv")
+        frames.append(table[(table.run == m.run) & (table.subset == "measured") & (table.task_family == "ALL")])
+    for component in COMPONENTS:
+        digits = 1 if component.startswith("F") else 2
+        for foot in FEET:
+            cells = []
+            for frame in frames:
+                rmse = frame[(frame.component == component) & (frame.foot == foot)].groupby("participant").rmse.mean()
+                cells.append(rf"${rmse.mean():.{digits}f} \pm {rmse.std():.{digits}f}$")
+            lines.append(rf"${component[0]}_{{{component[1]},{foot}}}$ ({physical_unit(component)}) & "
+                         + " & ".join(cells) + r" \\")
+    lines += [r"\bottomrule", r"\end{tabular}"]
+    return "\n".join(lines) + "\n"
+
+
+def airborne_table(evaluation_dir: Path, run: str, anthropometry: Path = ANTHROPOMETRY) -> str:
+    """LaTeX tabular of the airborne samples, where the truth is zero: RMSE and mean error per component and foot,
+    in %BW for the forces and %BW.H for the moments."""
     table = read_table(Path(evaluation_dir) / "per_participant.csv")
     rows = table[(table.run == run) & (table.subset == "airborne") & (table.task_family == "ALL")]
+    rows = rows.assign(rmse=normalised(rows, evaluation_dir, anthropometry=anthropometry),
+                       mean_error=normalised(rows, evaluation_dir, "mean_error", anthropometry=anthropometry))
     lines = [
         r"\begin{tabular}{lcccc}",
         r"\toprule",
@@ -527,8 +586,7 @@ def airborne_table(evaluation_dir: Path, run: str) -> str:
         r"\midrule",
     ]
     for component in COMPONENTS:
-        force = component.startswith("F")
-        digits = 1 if force else 2
+        digits = normalised_digits(component)
         cells = []
         for foot in FEET:
             values = rows[(rows.component == component) & (rows.foot == foot)].groupby("participant")
@@ -537,7 +595,7 @@ def airborne_table(evaluation_dir: Path, run: str) -> str:
                 rf"${rmse.mean():.{digits}f} \pm {rmse.std():.{digits}f}$",
                 rf"${bias.mean():+.{digits}f} \pm {bias.std():.{digits}f}$",
             ]
-        lines.append(rf"${component[0]}_{component[1]}$ ({'N' if force else r'N$\cdot$m'}) & " + " & ".join(cells) + r" \\")
+        lines.append(rf"${component[0]}_{component[1]}$ ({normalised_unit(component)}) & " + " & ".join(cells) + r" \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(lines) + "\n"
 
@@ -569,6 +627,25 @@ def per_foot_rmse_macros(evaluation_dir: Path, run: str) -> str:
         digits = 1 if component.startswith("F") else 2
         side = "Left" if foot == "L" else "Right"
         lines.append(rf"\newcommand{{\rmseComp{component}{side}}}{{{rmse:.{digits}f}}}")
+    return "\n".join(lines) + "\n"
+
+
+def per_foot_normalised_macros(evaluation_dir: Path, run: str, anthropometry: Path = ANTHROPOMETRY) -> str:
+    """\\bwComp<C>Left and \\bwComp<C>Right: RMSE of each component and foot on measured samples in %BW (forces)
+    or %BW.H (moments), mean over the Participants, as in the results table; \\airborneBw<C>: the RMSE of each
+    component on airborne samples, both feet, likewise normalised."""
+    table = read_table(Path(evaluation_dir) / "per_participant.csv")
+    rows = table[(table.run == run) & (table.task_family == "ALL")]
+    rows = rows.assign(rmse_norm=normalised(rows, evaluation_dir, anthropometry=anthropometry))
+    lines = []
+    measured = rows[rows.subset == "measured"]
+    for (component, foot), value in measured.groupby(["component", "foot"]).rmse_norm.mean().items():
+        if foot in ("L", "R"):
+            lines.append(rf"\newcommand{{\bwComp{component}{'Left' if foot == 'L' else 'Right'}}}"
+                         rf"{{{value:.{normalised_digits(component)}f}}}")
+    airborne = rows[(rows.subset == "airborne") & rows.foot.isin(["L", "R"])]
+    for component, value in airborne.groupby(["component", "participant"]).rmse_norm.mean().groupby("component").mean().items():
+        lines.append(rf"\newcommand{{\airborneBw{component}}}{{{value:.{normalised_digits(component)}f}}}")
     return "\n".join(lines) + "\n"
 
 
@@ -734,12 +811,13 @@ def loading_macros(loading: pd.DataFrame, evaluation_dir: Path, run: str) -> str
 
 
 def transition_macros(transitions: pd.DataFrame, body_weight_csv: Path, airborne: pd.DataFrame) -> str:
-    """\\transitionRmse<E> and \\transitionBias<E> per event; \\airborneBiasFamily<F> per task family."""
+    """\\transitionRmse<E> (N), \\transitionBw<E> (%BW) and \\transitionBias<E> per event; \\airborneBiasFamily<F> per task family."""
     stats = transition_stats(transitions, body_weight_csv)
     names = {"stance": "Stance", "contact": "Contact", "lift_off": "LiftOff", "air": "Air"}
     lines = []
     for event, name in names.items():
         lines += [rf"\newcommand{{\transitionRmse{name}}}{{{stats.loc[event].rmse:.1f}}}",
+                  rf"\newcommand{{\transitionBw{name}}}{{{stats.loc[event].pct_bw:.2f}}}",
                   rf"\newcommand{{\transitionBias{name}}}{{${stats.loc[event].bias:+.1f}$}}"]
     by_family = airborne.groupby(["task_family", "participant"]).mean_error_N.mean().groupby("task_family").mean()
     for family, name in FAMILY_MACROS.items():
@@ -751,22 +829,21 @@ def transition_macros(transitions: pd.DataFrame, body_weight_csv: Path, airborne
 def loading_table(loading: pd.DataFrame, evaluation_dir: Path, run: str) -> str:
     """LaTeX tabular of the trials without and with the backpack (``loading.csv`` of loading_and_transitions.py).
 
-    Per condition: NRMSE (see ``loading_stats``), vertical force RMSE in N and %BW; for the backpack,
+    Per condition: NRMSE (see ``loading_stats``), vertical force RMSE in %BW; for the backpack,
     the paired Wilcoxon p against unloaded.
     """
     stats = loading_stats(loading, evaluation_dir, run)
     worse, n, p = backpack_comparison(stats)
     lines = [
-        r"\begin{tabular}{lcccc}",
+        r"\begin{tabular}{lccc}",
         r"\toprule",
-        r"Load condition & NRMSE (\%) & $F_z$ (N) & $F_z$ (\%BW) & $p$ \\",
+        r"Load condition & NRMSE (\%) & $F_z$ (\%BW) & $p$ \\",
         r"\midrule",
     ]
     for condition, label, tested in (("unloaded", "Unloaded", "--"), ("backpack", "Backpack", format_p(P_VALUES("pBackpack", p)))):
         s = stats[condition]
         lines.append(
-            rf"{label} & ${s.nrmse_pct.mean():.2f} \pm {s.nrmse_pct.std():.2f}$ & {s.fz_rmse_n.mean():.1f} "
-            rf"& {s.fz_pct_bw.mean():.2f} & {tested} \\"
+            rf"{label} & ${s.nrmse_pct.mean():.2f} \pm {s.nrmse_pct.std():.2f}$ & {s.fz_pct_bw.mean():.2f} & {tested} \\"
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(lines) + "\n"
@@ -800,13 +877,12 @@ def transition_table(transitions: pd.DataFrame, body_weight_csv: Path) -> str:
     lines = [
         r"\begin{tabular}{lccc}",
         r"\toprule",
-        r"Samples & RMSE (N) & RMSE (\%BW) & Mean error (N) \\",
+        r"Samples & RMSE (\%BW) & Mean error (N) \\",
         r"\midrule",
     ]
     for event, label in TRANSITION_EVENTS.items():
         s = stats.loc[event]
-        lines.append(rf"{label} & ${s.rmse:.1f} \pm {s.rmse_sd:.1f}$ & ${s.pct_bw:.2f} \pm {s.pct_bw_sd:.2f}$ "
-                     rf"& ${s.bias:+.1f} \pm {s.bias_sd:.1f}$ \\")
+        lines.append(rf"{label} & ${s.pct_bw:.2f} \pm {s.pct_bw_sd:.2f}$ & ${s.bias:+.1f} \pm {s.bias_sd:.1f}$ \\")
     lines += [r"\bottomrule", r"\end{tabular}"]
     return "\n".join(lines) + "\n"
 
@@ -1216,6 +1292,7 @@ def write_numbers(evaluation: Path, output: Path) -> None:
         lines += [rf"\newcommand{{\wins{name}}}{{{wins}}}", rf"\newcommand{{\p{name}}}{{{format_p(P_VALUES(f'p{name}', p))}}}"]
     main_dir = evaluation / METHODS["Main"][0]
     lines += [component_macros(main_dir, METHODS["Main"][1]), per_foot_rmse_macros(main_dir, METHODS["Main"][1]),
+              per_foot_normalised_macros(main_dir, METHODS["Main"][1]),
               reference_sensitivity_macros(), family_macros(main_dir, METHODS["Main"][1]),
               measured_share_macros(main_dir, METHODS["Main"][1])]
     extra = evaluation / LOADING_TRANSITIONS
@@ -1292,6 +1369,7 @@ def write_tables(evaluation: Path, tables: Path) -> None:
 
     (tables / "results.tex").write_text(results_table(columns(RESULTS_TABLE)))
     (tables / "results_emulated.tex").write_text(results_table(columns(EMULATED_TABLE)))
+    (tables / "results_rmse.tex").write_text(rmse_table(columns(RESULTS_TABLE)))
     (tables / "airborne.tex").write_text(airborne_table(*main_run))
     (tables / "task_families.tex").write_text(family_table(*main_run, FAMILY_LABELS))
     extra = evaluation / LOADING_TRANSITIONS

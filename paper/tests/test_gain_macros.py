@@ -62,6 +62,25 @@ def test_the_rmse_of_each_component_and_foot_is_the_mean_over_participants(tmp_p
     assert r"\newcommand{\rmseCompMxRight}{1.31}" in macros
 
 
+def test_the_normalised_rmse_of_each_component_and_foot_is_the_mean_over_participants(tmp_path):
+    import json
+
+    pd.DataFrame({
+        "run": ["mlp"] * 4, "subset": ["measured"] * 4, "task_family": ["ALL"] * 4,
+        "component": ["Fx", "Fx", "Mx", "Mx"], "foot": ["L", "L", "R", "R"], "participant": ["P01", "P02"] * 2,
+        "rmse": [10.0, 30.0, 2.0, 2.0],
+    }).to_csv(tmp_path / "per_participant.csv", index=False)
+    pd.DataFrame({"subject": ["P01", "P02", "P01b"], "body_weight_N": [500.0, 1000.0, 500.0]}).to_csv(
+        tmp_path / "body_weight.csv", index=False)
+    anthropometry = tmp_path / "anthropometry.json"
+    anthropometry.write_text(json.dumps({"P01": {"height_m": 2.0}, "P02": {"height_m": 1.0}}))
+
+    macros = ma.per_foot_normalised_macros(tmp_path, "mlp", anthropometry=anthropometry)
+
+    assert r"\newcommand{\bwCompFxLeft}{2.50}" in macros  # 2 and 3 %BW
+    assert r"\newcommand{\bwCompMxRight}{0.200}" in macros  # 0.2 and 0.2 %BW.H
+
+
 def test_the_spread_of_the_minimal_configuration_counts_the_participants_above_the_target(monkeypatch):
     import types
 

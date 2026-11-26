@@ -3,6 +3,8 @@
 import sys
 from pathlib import Path
 
+import json
+
 import pandas as pd
 import pytest
 
@@ -36,6 +38,16 @@ def write_evaluation(directory: Path, records) -> Path:
     directory.mkdir(parents=True)
     pd.DataFrame(records).to_csv(directory / "per_participant.csv", index=False)
     return directory
+
+
+def write_body(directory: Path, weights: dict[str, float], heights: dict[str, float]) -> Path:
+    """``body_weight.csv`` (unloaded Subjects and their loaded ``b`` twins) in ``directory``; returns the anthropometry file."""
+    subjects = list(weights) + [f"{p}b" for p in weights]
+    pd.DataFrame({"subject": subjects, "body_weight_N": [weights[s.rstrip("b")] for s in subjects]}).to_csv(
+        directory / "body_weight.csv", index=False)
+    anthropometry = directory / "anthropometry.json"
+    anthropometry.write_text(json.dumps({p: {"age_years": 30, "height_m": h} for p, h in heights.items()}))
+    return anthropometry
 
 
 def test_score_is_the_mean_over_participants_of_each_participants_mean_over_the_12_targets(tmp_path):
@@ -345,8 +357,9 @@ def test_loading_table_normalises_both_conditions_by_the_all_task_range_and_test
 
     table = ma.loading_table(loading, evaluation, "mlp")
 
-    assert r"Unloaded & $7.50 \pm 0.00$ & 40.0 & 5.00 & -- \\" in table
-    assert r"Backpack & $9.00 \pm 0.00$ & 48.0 & 6.00 & 0.031 \\" in table
+    assert table.startswith(r"\begin{tabular}{lccc}")
+    assert r"Unloaded & $7.50 \pm 0.00$ & 5.00 & -- \\" in table
+    assert r"Backpack & $9.00 \pm 0.00$ & 6.00 & 0.031 \\" in table
 
 
 def test_transition_table_averages_the_feet_per_participant(tmp_path):
@@ -360,7 +373,7 @@ def test_transition_table_averages_the_feet_per_participant(tmp_path):
     table = ma.transition_table(transitions, tmp_path / "bw.csv")
 
     # 60 N of 500 and 1000 N: 12 and 6 %BW, whose mean is 9 and sample SD 4.24
-    assert r"Contact, $\pm$50\,ms & $60.0 \pm 0.0$ & $9.00 \pm 4.24$ & $+10.0 \pm 0.0$ \\" in table
+    assert r"Contact, $\pm$50\,ms & $9.00 \pm 4.24$ & $+10.0 \pm 0.0$ \\" in table
     assert table.index("Stance") < table.index("Contact") < table.index("Lift-off") < table.index("In the air")
 
 
@@ -499,14 +512,17 @@ def test_results_table_gives_each_target_per_method_and_bolds_the_lowest_nrmse(t
     for participant in ("P01", "P02"):
         records += rows("mlp", participant, 0.10, 2.0, 0.9) + rows("rf", participant, 0.095, 2.0, 0.8)
     evaluation = write_evaluation(tmp_path / "e", [dict(r, rmse=3.0) for r in records])
+    anthropometry = write_body(evaluation, {"P01": 600.0, "P02": 600.0}, {"P01": 1.5, "P02": 2.5})
 
     table = ma.results_table([ma.ResultsColumn("MLP (ours)", evaluation, "mlp", 0.2, True, ours=True),
-                              ma.ResultsColumn("B net", evaluation, "rf", None, False)])
+                              ma.ResultsColumn("B net", evaluation, "rf", None, False)], anthropometry=anthropometry)
 
     lines = table.splitlines()
     assert sum(line.startswith("$") for line in lines) == 12  # 6 components x 2 feet
-    # bold: lowest among the real-time methods (A); underlined: lowest overall (B, offline)
-    assert r"$F_{x,L}$ (N) & 3.0 & \textbf{10.00} & 0.90 & 3.0 & \underline{9.50} & 0.80 \\" in lines
+    # RMSE of a force in %BW (3 N of 600 N), of a moment in %BW.H (3 N m of 600 N x 1.5 m and 600 N x 2.5 m);
+    # bold: lowest NRMSE among the real-time methods (A); underlined: lowest overall (B, offline)
+    assert r"$F_{x,L}$ (\%BW) & 0.50 & \textbf{10.00} & 0.90 & 0.50 & \underline{9.50} & 0.80 \\" in lines
+    assert r"$M_{z,R}$ (\%BW$\cdot$H) & 0.267 & \textbf{10.00} & 0.90 & 0.267 & \underline{9.50} & 0.80 \\" in lines
     assert r"\underline{9.50} $\pm$ 0.00" in table
     assert lines[0] == r"\begin{tabular}{l" + ma.OURS_SHADE * 3 + "ccc}"  # our columns shaded
     shaded = r"\multicolumn{3}{" + ma.OURS_SHADE + "}"
@@ -520,12 +536,31 @@ def test_airborne_table_gives_the_rmse_and_mean_error_of_each_foot(tmp_path):
     records = [dict(r, rmse=rmse, mean_error=0.5) for participant, rmse in (("P01", 1.0), ("P02", 3.0))
                for r in rows("mlp", participant, 0.1, 1.0, 0.9, subset="airborne")]
     evaluation = write_evaluation(tmp_path / "e", records)
+    anthropometry = write_body(evaluation, {"P01": 100.0, "P02": 100.0}, {"P01": 2.0, "P02": 2.0})
 
-    table = ma.airborne_table(evaluation, "mlp")
+    table = ma.airborne_table(evaluation, "mlp", anthropometry=anthropometry)
 
-    # mean and sample SD over the Participants of 1 and 3
-    assert r"$F_z$ (N) & $2.0 \pm 1.4$ & $+0.5 \pm 0.0$ & $2.0 \pm 1.4$ & $+0.5 \pm 0.0$ \\" in table
-    assert r"$M_y$ (N$\cdot$m) & $2.00 \pm 1.41$ & $+0.50 \pm 0.00$ & $2.00 \pm 1.41$ & $+0.50 \pm 0.00$ \\" in table
+    # mean and sample SD over the Participants of 1 and 3 %BW (forces), of 0.5 and 1.5 %BW.H (moments)
+    assert r"$F_z$ (\%BW) & $2.00 \pm 1.41$ & $+0.50 \pm 0.00$ & $2.00 \pm 1.41$ & $+0.50 \pm 0.00$ \\" in table
+    assert r"$M_y$ (\%BW$\cdot$H) & $1.000 \pm 0.707$ & $+0.250 \pm 0.000$ & $1.000 \pm 0.707$ & $+0.250 \pm 0.000$ \\" in table
+
+
+def test_rmse_table_gives_the_rmse_in_physical_units_with_its_sd_over_participants(tmp_path):
+    records = []
+    for participant, rmse in (("P01", 10.0), ("P02", 14.0)):
+        records += [dict(r, rmse=rmse) for r in rows("mlp", participant, 0.1, 1.0, 0.9)]
+        records += [dict(r, rmse=rmse / 2) for r in rows("rf", participant, 0.1, 1.0, 0.9)]
+    evaluation = write_evaluation(tmp_path / "e", records)
+
+    table = ma.rmse_table([ma.ResultsColumn("MLP (ours)", evaluation, "mlp", 0.2, True, ours=True),
+                           ma.ResultsColumn("B net", evaluation, "rf", None, False)])
+
+    lines = table.splitlines()
+    assert lines[0] == r"\begin{tabular}{l" + ma.OURS_SHADE + "c}"
+    assert sum(line.startswith("$") for line in lines) == 12
+    # forces in N with one decimal, moments in N m with two
+    assert r"$F_{x,L}$ (N) & $12.0 \pm 2.8$ & $6.0 \pm 1.4$ \\" in lines
+    assert r"$M_{z,R}$ (N$\cdot$m) & $12.00 \pm 2.83$ & $6.00 \pm 1.41$ \\" in lines
 
 
 def test_measured_share_macros_give_each_family_its_percentage_of_the_measured_samples(tmp_path):
